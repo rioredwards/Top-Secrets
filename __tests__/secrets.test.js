@@ -13,7 +13,7 @@ describe('secrets', () => {
   const mockUser = {
     firstName: 'Test',
     lastName: 'User',
-    email: 'test@example.com',
+    email: 'test@defense.gov',
     password: '12345',
   };
 
@@ -35,7 +35,7 @@ describe('secrets', () => {
     // sign in user
     await agent
       .post('/api/v1/users/sessions')
-      .send({ email: 'test@example.com', password: '12345' });
+      .send({ email: 'test@defense.gov', password: '12345' });
     const res = await agent.get('/api/v1/secrets');
     expect(res.status).toEqual(200);
     expect(res.body[0]).toEqual({
@@ -58,7 +58,7 @@ describe('secrets', () => {
     // sign in user
     await agent
       .post('/api/v1/users/sessions')
-      .send({ email: 'test@example.com', password: '12345' });
+      .send({ email: 'test@defense.gov', password: '12345' });
     const res = await agent.post('/api/v1/secrets').send(mockSecret);
     const { title, description } = mockSecret;
 

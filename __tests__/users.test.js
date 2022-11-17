@@ -12,7 +12,7 @@ describe('users', () => {
   const mockUser = {
     firstName: 'Test',
     lastName: 'User',
-    email: 'test@example.com',
+    email: 'test@defense.gov',
     password: '12345',
   };
 
@@ -33,7 +33,7 @@ describe('users', () => {
     await request(app).post('/api/v1/users').send(mockUser);
     const res = await request(app)
       .post('/api/v1/users/sessions')
-      .send({ email: 'test@example.com', password: '12345' });
+      .send({ email: 'test@defense.gov', password: '12345' });
     expect(res.status).toEqual(200);
   });
 
@@ -49,7 +49,7 @@ describe('users', () => {
     // sign in user
     await agent
       .post('/api/v1/users/sessions')
-      .send({ email: 'test@example.com', password: '12345' });
+      .send({ email: 'test@defense.gov', password: '12345' });
     const res = await agent.get('/api/v1/users/protected');
     expect(res.status).toEqual(200);
   });
@@ -60,7 +60,7 @@ describe('users', () => {
 
     await agent
       .post('/api/v1/users/sessions')
-      .send({ email: 'test@example.com', password: '12345' });
+      .send({ email: 'test@defense.gov', password: '12345' });
 
     const resp = await agent.delete('/api/v1/users/sessions');
     expect(resp.status).toBe(204);
