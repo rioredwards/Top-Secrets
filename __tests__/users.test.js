@@ -29,7 +29,7 @@ describe('users', () => {
     });
   });
 
-  it('POST /api/v1/sessions signs in an existing user', async () => {
+  it('POST /api/v1/users/sessions signs in an existing user', async () => {
     await request(app).post('/api/v1/users').send(mockUser);
     const res = await request(app)
       .post('/api/v1/users/sessions')
@@ -42,7 +42,7 @@ describe('users', () => {
     expect(res.status).toEqual(401);
   });
 
-  it('api/v1/users/protected should return the current user if authenticated', async () => {
+  it('api/v1/users/protected should return "You are authenticated!" if authenticated', async () => {
     const agent = request.agent(app);
     // create user
     await UserService.create({ ...mockUser });
@@ -52,6 +52,18 @@ describe('users', () => {
       .send({ email: 'test@example.com', password: '12345' });
     const res = await agent.get('/api/v1/users/protected');
     expect(res.status).toEqual(200);
+  });
+
+  it('DELETE /sessions deletes the user session', async () => {
+    const agent = request.agent(app);
+    await UserService.create({ ...mockUser });
+
+    await agent
+      .post('/api/v1/users/sessions')
+      .send({ email: 'test@example.com', password: '12345' });
+
+    const resp = await agent.delete('/api/v1/users/sessions');
+    expect(resp.status).toBe(204);
   });
 
   afterAll(() => {
