@@ -17,6 +17,12 @@ describe('secrets', () => {
     password: '12345',
   };
 
+  // Dummy secret for testing
+  const mockSecret = {
+    title: 'Secret Title',
+    description: 'secret description',
+  };
+
   it('GET api/v1/secrets should return a 401 if not authenticated', async () => {
     const res = await request(app).get('/api/v1/secrets');
     expect(res.status).toEqual(401);
@@ -32,32 +38,34 @@ describe('secrets', () => {
       .send({ email: 'test@example.com', password: '12345' });
     const res = await agent.get('/api/v1/secrets');
     expect(res.status).toEqual(200);
-    expect(res.body).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "createdAt": "2022-11-17T00:39:07.400Z",
-          "description": "secret description 1",
-          "id": "1",
-          "title": "Secret Title 1",
-        },
-        Object {
-          "createdAt": "2022-11-17T00:39:07.400Z",
-          "description": "secret description 2",
-          "id": "2",
-          "title": "Secret Title 2",
-        },
-        Object {
-          "createdAt": "2022-11-17T00:39:07.400Z",
-          "description": "secret description 3",
-          "id": "3",
-          "title": "Secret Title 3",
-        },
-      ]
-    `);
     expect(res.body[0]).toEqual({
       id: expect.any(String),
       title: expect.any(String),
       description: expect.any(String),
+      createdAt: expect.any(String),
+    });
+  });
+
+  it('POST api/v1/secrets should return a 401 if not authenticated', async () => {
+    const res = await request(app).post('/api/v1/secrets').send(mockSecret);
+    expect(res.status).toEqual(401);
+  });
+
+  it('POST /api/v1/secrets creates a new secret', async () => {
+    const agent = request.agent(app);
+    // create user
+    await UserService.create({ ...mockUser });
+    // sign in user
+    await agent
+      .post('/api/v1/users/sessions')
+      .send({ email: 'test@example.com', password: '12345' });
+    const res = await agent.post('/api/v1/secrets').send(mockSecret);
+    const { title, description } = mockSecret;
+
+    expect(res.body).toEqual({
+      id: expect.any(String),
+      title,
+      description,
       createdAt: expect.any(String),
     });
   });
